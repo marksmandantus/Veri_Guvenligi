@@ -56,6 +56,8 @@ def user_profile(request):
             # For example, create a default directory if it doesn't exist.
                 directory, created = Directory.objects.get_or_create(name='Default')
             uploaded_file.directory = directory
+            uploaded_file.encryption_algorithm = form.cleaned_data.get('encryption_algorithm', 'none')
+            uploaded_file.encryption_key = form.cleaned_data.get('encryption_key')
             uploaded_file.save()
             return redirect('user_profile')
     else:
