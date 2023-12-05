@@ -4,67 +4,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="{% static 'css/profile.css' %}">
     <title>User Profile</title>
 </head>
 <body>
 
-<div class="profile-container">
-    <h1>User Profile</h1>
+    <header class="header">
+        <div class="container">
+            <h1>User Profile</h1>
+            <nav class="nav">
+                <a href="{% url 'logout' %}">Çıkış Yap</a>
+            </nav>
+        </div>
+    </header>
     
-    <!-- Display user profile information -->
-    <div class="profile-info">
-        <p><strong>Username:</strong> {{ user.username }}</p>
-        <p><strong>Email:</strong> {{ user.email }}</p>
+    <div class="container mt-4">
+        <div class="profile-info">
+            <p><strong>Username:</strong> {{ user.username }}</p>
+            <p><strong>Email:</strong> {{ user.email }}</p>
+        </div>
+    
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form }}
+            <button type="submit" class="btn btn-primary">Dosya Yükle</button>
+        </form>
+    
+        <div class="uploaded-files mt-4">
+            <h3>Uploaded Files</h3>
+            {% if user_files %}
+                <ul class="file-list">
+                    {% for file in user_files %}
+                        <li class="file-item">
+                            <a href="{{ file.file.url }}" class="file-link">{{ file.file.name }}</a>
+                            <div class="file-buttons">
+                                <button class="btn btn-success download-file" data-file-url="{{ file.file.url }}">Download</button>
+                                <button class="btn btn-danger delete-file" data-file-id="{{ file.id }}">Delete</button>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No files uploaded yet.</p>
+            {% endif %}
+        </div>
+    
+        {% for directory, files in files_by_directory.items %}
+            <div class="directory mt-4">
+                <h3>{{ directory.name }}</h3>
+                {% if files %}
+                    <ul class="file-list">
+                        {% for file in files %}
+                            <li class="file-item">
+                                <a href="{{ file.file.url }}" class="file-link">{{ file.file.name }}</a>
+                                <div class="file-buttons">
+                                    <button class="btn btn-success download-file" data-file-url="{{ file.file.url }}">Download</button>
+                                    <button class="btn btn-danger delete-file" data-file-id="{{ file.id }}">Delete</button>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>No files uploaded in this directory.</p>
+                {% endif %}
+            </div>
+        {% endfor %}
     </div>
 
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form }}
-        <button type="submit">Dosya Yükle</button>
-    </form>
-    <!-- Yüklenen dosyaları listele -->
-    <h3>Uploaded Files</h3>
-    {% if user_files %}
-   <ul>
-       {% for file in user_files %}
-           <li>
-               <a href="{{ file.file.url }}">{{ file.file.name }}</a>
-               <button class="delete-file" data-file-id="{{ file.id }}">Delete</button>
-           </li>
-       {% endfor %}
-   </ul>
-{% else %}
-   <p>No files uploaded yet.</p>
-{% endif %}
-
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-<script>
-   $(document).ready(function () {
-       $('.delete-file').on('click', function () {
-           var fileId = $(this).data('file-id');
-           deleteFile(fileId);
-       });
-
-       function deleteFile(fileId) {
-           var csrftoken = $('[name=csrfmiddlewaretoken]').val();
-
-           $.ajax({
-               url: `/delete_file/${fileId}/`,
-               method: 'POST',
-               headers: {'X-CSRFToken': csrftoken},
-               success: function (data) {
-                   if (data.status === 'success') {
-                       // Başarıyla silindiğinde sayfayı yenile
-                       location.reload();
-                   } else {
-                       alert('Dosya silinirken bir hata oluştu.');
-                   }
-               },
-               error: function () {
-                   alert('Dosya silinirken bir hata oluştu.');
-               }
-           });
-       }
-   });
-</script>
+<script src="{% static 'js/profile.js' %}"></script>
+</html>
