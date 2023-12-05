@@ -31,7 +31,7 @@ Bu proje, istemcinin sunucuya dosya yüklemesini, şifreleme algoritmalarını s
 
 1. **Projeyi İndirme**
     ```bash
-    git clone https://github.com/kullanici/proje.git
+    git clone https://github.com/marksmandantus/Veri_Guvenligi.git
     cd proje
     ```
 
