@@ -39,7 +39,7 @@
                         <li class="file-item">
                             <a href="{{ file.file.url }}" class="file-link">{{ file.file.name }}</a>
                             <div class="file-buttons">
-                                <button class="btn btn-success download-file" data-file-url="{{ file.file.url }}" data-encryption-key="{{ file.encryption_key }}">Download</button>
+                                <button class="btn btn-success download-file" data-file-url="{{ file.file.url }}" data-encryption-key="{{ file.encryption_key }}" data-encryption-algorithm="{{file.encryption_algorithm}}">Download</button>
                                 <button class="btn btn-danger delete-file" data-file-id="{{ file.id }}">Delete</button>
                             </div>
                             

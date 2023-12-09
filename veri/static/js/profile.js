@@ -7,15 +7,20 @@
 
        $('.download-file').on('click', function() {
         var fileEncryptionKey = $(this).data('encryption-key');
+        var fileEncryptionAlgorithm = $(this).data('encryption-algorithm');
+        var enteredAlgorithm = prompt('Enter Encryption Algorithm:');
         var enteredKey = prompt('Enter Encryption Key:');
-
+        
         console.log(`File Encryption Key: ${fileEncryptionKey}`);
         console.log(`Entered Key: ${enteredKey}`);
     
         if (enteredKey === null || enteredKey === '') {
             return;
         }
-        if (enteredKey == fileEncryptionKey) {
+        if (enteredAlgorithm === null || enteredAlgorithm === '') {
+            return;
+        }
+        if (enteredKey == fileEncryptionKey && enteredAlgorithm == fileEncryptionAlgorithm) {
             var fileUrl = $(this).data('file-url');
           
             console.log(`Downloading file from URL: ${fileUrl}`);
@@ -43,7 +48,7 @@
             })
             .catch(error => console.error(error));
         } else {
-            alert('Yanlış şifreleme anahtarı! Dosya indirilemiyor.');
+            alert('Yanlış şifreleme anahtarı veya algoritma! Dosya indirilemiyor.');
         }
     });
 
