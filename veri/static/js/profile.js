@@ -5,22 +5,46 @@
            deleteFile(fileId);
        });
 
-       $('.download-file').on('click', function () {
-        var fileUrl = $(this).data('file-url');
+       $('.download-file').on('click', function() {
+        var fileEncryptionKey = $(this).data('encryption-key');
+        var enteredKey = prompt('Enter Encryption Key:');
 
-        // Dosyayı indirme işlemi
-        fetch(fileUrl)
-            .then(response => response.blob())
+        console.log(`File Encryption Key: ${fileEncryptionKey}`);
+        console.log(`Entered Key: ${enteredKey}`);
+    
+        if (enteredKey === null || enteredKey === '') {
+            return;
+        }
+        if (enteredKey == fileEncryptionKey) {
+            var fileUrl = $(this).data('file-url');
+          
+            console.log(`Downloading file from URL: ${fileUrl}`);
+
+            fetch(fileUrl, {
+                headers: {
+                    'Algorithm-Key': fileEncryptionKey
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.blob();
+                } else {
+                    throw new Error('Dosya indirme hatası: ' + response.statusText);
+                }
+            })
             .then(blob => {
                 var url = window.URL.createObjectURL(blob);
                 var a = document.createElement('a');
                 a.href = url;
-                a.download = fileUrl.split('/').pop(); // Dosya adını al
+                a.download = fileUrl.split('/').pop();
                 document.body.appendChild(a);
                 a.click();
                 window.URL.revokeObjectURL(url);
             })
-            .catch(error => console.error('Dosya indirme hatası:', error));
+            .catch(error => console.error(error));
+        } else {
+            alert('Yanlış şifreleme anahtarı! Dosya indirilemiyor.');
+        }
     });
 
     
