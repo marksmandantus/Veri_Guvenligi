@@ -19,6 +19,8 @@ class UploadedFile(models.Model):
     directory = models.ForeignKey(Directory, on_delete=models.CASCADE)
     file = models.FileField(upload_to='uploads/')
     uploaded_at = models.DateTimeField(auto_now_add=True)
+    encryption_algorithm = models.CharField(max_length=255, null=True, blank=True)
+    encryption_key = models.CharField(max_length=255, null=True, blank=True)
 
     def encrypt_file(self, plaintext, algorithm, key):
         if algorithm == 'des':
