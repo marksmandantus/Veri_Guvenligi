@@ -73,7 +73,7 @@ def user_profile(request):
                 # Şifreleme yapılmayacaksa
                 uploaded_file.is_encrypted = False
                 uploaded_file.save()
-                print("File is encrypted")
+                print("File is not encrypted")
 
             return redirect('user_profile')
     else:
@@ -81,6 +81,20 @@ def user_profile(request):
 
     user_files = UploadedFile.objects.filter(user_profile=user_profile)
     return render(request, 'user_profile.html', {'form': form, 'user_files': user_files, 'files_by_directory': files_by_directory})
+
+def check_file_encryption(request, file_id):
+    try:
+        uploaded_file = UploadedFile.objects.get(id=file_id)
+
+        if uploaded_file.is_encrypted:
+            result_message = "Dosya şifreli."
+        else:
+            result_message = "Dosya şifreli değil."
+
+    except UploadedFile.DoesNotExist:
+        result_message = "Belirtilen ID'ye sahip dosya bulunamadı."
+
+    return render(request, 'check_file_encryption.html', {'result_message': result_message})
 
 def custom_404(request, exception):
     return render(request, '404.html', status=404)

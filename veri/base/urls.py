@@ -13,6 +13,8 @@ urlpatterns = [
     path('delete_file/<int:id>/', views.delete_file, name='delete_file'),
     path('logout/', LogoutView.as_view(next_page='index'), name='logout'),
     path('', views.index, name='index'),
+    path('check_file_encryption/<int:file_id>/', views.check_file_encryption, name='check_file_encryption'),
+
 ]
 
 urlpatterns += [path('<path:path>/', TemplateView.as_view(template_name='404.html'))]
