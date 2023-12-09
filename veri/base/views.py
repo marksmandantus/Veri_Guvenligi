@@ -56,9 +56,25 @@ def user_profile(request):
             # For example, create a default directory if it doesn't exist.
                 directory, created = Directory.objects.get_or_create(name='Default')
             uploaded_file.directory = directory
-            uploaded_file.encryption_algorithm = form.cleaned_data.get('encryption_algorithm', 'none')
-            uploaded_file.encryption_key = form.cleaned_data.get('encryption_key')
-            uploaded_file.save()
+
+            #uploaded_file.encryption_algorithm = form.cleaned_data.get('encryption_algorithm', 'none')
+            #uploaded_file.encryption_key = form.cleaned_data.get('encryption_key')
+            algorithm = form.cleaned_data.get('encryption_algorithm')
+            key = form.cleaned_data.get('encryption_key')
+            # Dosyayı şifrele (gerektiğinde)
+            if algorithm and key:
+                plaintext = uploaded_file.file.read()
+                encrypted_data = uploaded_file.encrypt_file(plaintext, algorithm, key)
+                uploaded_file.encrypted_file = encrypted_data
+                uploaded_file.is_encrypted = True
+                uploaded_file.save()
+
+            else:
+                # Şifreleme yapılmayacaksa
+                uploaded_file.is_encrypted = False
+                uploaded_file.save()
+                print("File is encrypted")
+
             return redirect('user_profile')
     else:
         form = FileUploadForm()

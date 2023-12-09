@@ -4,6 +4,7 @@ from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 import base64
 from django.core.files.base import ContentFile
+import os 
 
 class CustomUser(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -21,18 +22,41 @@ class UploadedFile(models.Model):
     uploaded_at = models.DateTimeField(auto_now_add=True)
     encryption_algorithm = models.CharField(max_length=255, null=True, blank=True)
     encryption_key = models.CharField(max_length=255, null=True, blank=True)
+    encrypted_file = models.BinaryField(null=True, blank=True)
+    is_encrypted = models.BooleanField(default=False)
 
     def encrypt_file(self, plaintext, algorithm, key):
         if algorithm == 'des':
-            pass
-        elif algorithm == 'aes':
-            key = base64.b64decode(key.encode())
-            cipher = Cipher(algorithms.AES(key), modes.CFB8(), backend=default_backend())
+            key = key.ljust(8)[:8].encode()  # DES anahtarı 8 byte olmalı
+            iv = b'01234567'
+            cipher = Cipher(algorithms.TripleDES(key), modes.CFB8(iv), backend=default_backend())
             encryptor = cipher.encryptor()
             ciphertext = encryptor.update(plaintext) + encryptor.finalize()
-            return base64.b64encode(ciphertext).decode()
+            return base64.b64encode(ciphertext)
+        if algorithm == 'aes':
+            # Anahtarı base64 kod çözme işlemi yapmadan kullan
+            key = key.encode()
+
+            # CFB8 modu için uygun boyutta rastgele bir IV oluştur
+            iv = os.urandom(16)
+
+            # Şifreleme işlemi için Cipher objesini oluşturma
+            cipher = Cipher(algorithms.AES(key), modes.CFB8(iv), backend=default_backend())
+
+            # Şifreleme işlemini gerçekleştirme
+            encryptor = cipher.encryptor()
+            ciphertext = encryptor.update(plaintext) + encryptor.finalize()
+
+            # IV'yi şifreli veriyle birleştirip base64 kodlama işlemi
+            encrypted_data = base64.b64encode(iv + ciphertext)
+
+            return encrypted_data
         elif algorithm == 'blowfish':
-            pass
+            key = key.ljust(16)[:16].encode()  # Blowfish anahtarı 16 byte olmalı
+            cipher = Cipher(algorithms.Blowfish(key), modes.CFB8(), backend=default_backend())
+            encryptor = cipher.encryptor()
+            ciphertext = encryptor.update(plaintext) + encryptor.finalize()
+            return base64.b64encode(ciphertext)
         else:
             # Şifreleme yapılmayacaksa direkt olarak plaintext'i döndür
             return plaintext
