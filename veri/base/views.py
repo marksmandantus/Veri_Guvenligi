@@ -3,6 +3,7 @@ from django.contrib.auth import login
 from .forms import RegisterForm, UserLoginForm, FileUploadForm
 from .models import UploadedFile, CustomUser, Directory
 from django.shortcuts import get_object_or_404
+from django.db.models import Q
 
 def index(request):
     return render(request, 'index.html')
@@ -79,7 +80,13 @@ def user_profile(request):
     else:
         form = FileUploadForm()
 
-    user_files = UploadedFile.objects.filter(user_profile=user_profile)
+    show_encrypted = request.GET.get('show_encrypted')
+    if show_encrypted:
+        user_files = UploadedFile.objects.filter(
+            Q(user_profile=user_profile) & Q(is_encrypted=True)
+        )
+    else:
+        user_files = UploadedFile.objects.filter(user_profile=user_profile)
     return render(request, 'user_profile.html', {'form': form, 'user_files': user_files, 'files_by_directory': files_by_directory})
 
 def check_file_encryption(request, file_id):

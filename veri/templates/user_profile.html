@@ -13,9 +13,7 @@
     <header class="header">
         <div class="container">
             <h1>User Profile</h1>
-            <nav class="nav">
-                <a href="{% url 'logout' %}">Çıkış Yap</a>
-            </nav>
+            <a href="{% url 'logout' %}" class="logout-link"><i class="fas fa-sign-out-alt"></i> Çıkış Yap</a>
         </div>
     </header>
     
@@ -28,7 +26,13 @@
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
             {{ form }}
-            <button type="submit" class="btn btn-primary">Dosya Yükle</button>
+            <button type="submit" class="btn btn-primary"><i class="fas fa-cloud-upload-alt"></i> Dosya Yükle</button>
+        </form>
+
+        <form method="get">
+            <input type="checkbox" name="show_encrypted" id="show_encrypted" {% if request.GET.show_encrypted %}checked{% endif %}>
+            <label for="show_encrypted">Show Encrypted Files</label>
+            <button type="submit" class="btn btn-primary"><i class="fas fa-filter"></i> Filter</button>
         </form>
     
         <div class="uploaded-files mt-4">
@@ -39,10 +43,9 @@
                         <li class="file-item">
                             <a href="{{ file.file.url }}" class="file-link">{{ file.file.name }}</a>
                             <div class="file-buttons">
-                                <button class="btn btn-success download-file" data-file-url="{{ file.file.url }}" data-encryption-key="{{ file.encryption_key }}" data-encryption-algorithm="{{file.encryption_algorithm}}">Download</button>
-                                <button class="btn btn-danger delete-file" data-file-id="{{ file.id }}">Delete</button>
+                                <button class="btn btn-success download-file" data-file-url="{{ file.file.url }}" data-encryption-key="{{ file.encryption_key }}" data-encryption-algorithm="{{file.encryption_algorithm}}"><i class="fas fa-download"></i> Download</button>
+                                <button class="btn btn-danger delete-file" data-file-id="{{ file.id }}"><i class="fas fa-trash-alt"></i> Delete</button>
                             </div>
-                            
                         </li>
                     {% endfor %}
                 </ul>
@@ -60,8 +63,8 @@
                             <li class="file-item">
                                 <a href="{{ file.file.url }}" class="file-link">{{ file.file.name }}</a>
                                 <div class="file-buttons">
-                                    <button class="btn btn-success" id="openModalButton" data-file-url="{{ file.file.url }}" data-encryption-key="{{ file.encryption_key }}">Download</button>
-                                    <button class="btn btn-danger delete-file" data-file-id="{{ file.id }}">Delete</button>
+                                    <button class="btn btn-success" id="openModalButton" data-file-url="{{ file.file.url }}" data-encryption-key="{{ file.encryption_key }}"><i class="fas fa-download"></i> Download</button>
+                                    <button class="btn btn-danger delete-file" data-file-id="{{ file.id }}"><i class="fas fa-trash-alt"></i> Delete</button>
                                 </div>
                             </li>
                         {% endfor %}
@@ -75,4 +78,7 @@
 
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script src="{% static 'js/profile.js' %}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script> <!-- Font Awesome JS CDN -->
+</body>
+
 </html>
