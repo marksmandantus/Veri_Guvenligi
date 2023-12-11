@@ -26,6 +26,14 @@
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
             {{ form }}
+            
+            <label for="upload_directory">Select Directory:</label>
+            <select name="upload_directory" id="upload_directory" required>
+                {% for directory in directories %}
+                    <option value="{{ directory.id }}">{{ directory.name }}</option>
+                {% endfor %}
+            </select>
+            
             <button type="submit" class="btn btn-primary"><i class="fas fa-cloud-upload-alt"></i> Dosya Yükle</button>
         </form>
 
@@ -92,6 +100,38 @@
                 {% endif %}
             </div>
         {% endfor %}
+
+        {% for directory, files in files_by_directory.items %}
+    <div class="directory mt-4">
+        <h3>{{ directory.name }}</h3>
+        {% if files %}
+            <ul class="file-list">
+                {% for file in files %}
+                    <li class="file-item">
+                        <a href="{{ file.file.url }}" class="file-link">{{ file.file.name }}</a>
+                        <div class="file-buttons">
+                            <form method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="move_file">
+                                <input type="hidden" name="file_id" value="{{ file.id }}">
+                                <label for="new_directory">Move to:</label>
+                                <select name="new_directory_id" required>
+                                    {% for target_directory in directories %}
+                                        <option value="{{ target_directory.id }}">{{ target_directory.name }}</option>
+                                    {% endfor %}
+                                </select>
+                                <button type="submit" class="btn btn-primary">Move</button>
+                            </form>
+                            <!-- Add other buttons as needed -->
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No files uploaded in this directory.</p>
+        {% endif %}
+    </div>
+{% endfor %}
     </div>
 
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>

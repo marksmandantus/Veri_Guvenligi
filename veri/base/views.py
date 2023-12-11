@@ -55,13 +55,27 @@ def user_profile(request):
             if directory_id:
                 Directory.objects.filter(id=directory_id).delete()
                 return redirect('user_profile')  # Redirect to refresh the page after deleting a directory
+        
+        elif action == 'move_file':
+            file_id = request.POST.get('file_id')
+            new_directory_id = request.POST.get('new_directory_id')
+            if file_id and new_directory_id:
+                try:
+                    uploaded_file = UploadedFile.objects.get(id=file_id)
+                    new_directory = Directory.objects.get(id=new_directory_id)
+                    uploaded_file.directory = new_directory
+                    uploaded_file.save()
+                    return redirect('user_profile')
+                except (UploadedFile.DoesNotExist, Directory.DoesNotExist):
+                    pass  # Handle the case where either the file or the directory does not exist
         form = FileUploadForm(request.POST, request.FILES)
         if form.is_valid():
             uploaded_file = form.save(commit=False)
             uploaded_file.user_profile = user_profile
 
             # Dizin bilgisini formdan al veya varsayılan bir dizin belirle
-            directory_id = form.cleaned_data.get('directory')
+            directory_id = request.POST.get('upload_directory')
+
             if directory_id:
                 directory = Directory.objects.get(id=directory_id)
             else:
