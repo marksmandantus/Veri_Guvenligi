@@ -43,6 +43,18 @@ def user_profile(request):
         )
 
     if request.method == 'POST':
+        action = request.POST.get('action')
+        if action == 'create_directory':
+            new_directory_name = request.POST.get('new_directory')
+            if new_directory_name:
+                Directory.objects.create(name=new_directory_name)
+                return redirect('user_profile')  # Redirect to refresh the page after creating a directory
+
+        elif action == 'delete_directory':
+            directory_id = request.POST.get('delete_directory')
+            if directory_id:
+                Directory.objects.filter(id=directory_id).delete()
+                return redirect('user_profile')  # Redirect to refresh the page after deleting a directory
         form = FileUploadForm(request.POST, request.FILES)
         if form.is_valid():
             uploaded_file = form.save(commit=False)
@@ -87,7 +99,8 @@ def user_profile(request):
         )
     else:
         user_files = UploadedFile.objects.filter(user_profile=user_profile)
-    return render(request, 'user_profile.html', {'form': form, 'user_files': user_files, 'files_by_directory': files_by_directory})
+    
+    return render(request, 'user_profile.html', {'form': form, 'user_files': user_files, 'files_by_directory': files_by_directory, 'directories': directories})
 
 def check_file_encryption(request, file_id):
     try:

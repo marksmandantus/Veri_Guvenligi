@@ -29,6 +29,24 @@
             <button type="submit" class="btn btn-primary"><i class="fas fa-cloud-upload-alt"></i> Dosya Yükle</button>
         </form>
 
+        <form method="post">
+            {% csrf_token %}
+            <label for="new_directory">Create New Directory:</label>
+            <input type="text" name="new_directory" id="new_directory" required>
+            <button type="submit" name="action" value="create_directory" class="btn btn-success"><i class="fas fa-folder-plus"></i> Create Directory</button>
+        </form>
+        
+        <form method="post">
+            {% csrf_token %}
+            <label for="delete_directory">Delete Directory:</label>
+            <select name="delete_directory" id="delete_directory" required>
+                {% for directory in directories %}
+                    <option value="{{ directory.id }}">{{ directory.name }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit" name="action" value="delete_directory" class="btn btn-danger"><i class="fas fa-folder-minus"></i> Delete Directory</button>
+        </form>
+
         <form method="get">
             <input type="checkbox" name="show_encrypted" id="show_encrypted" {% if request.GET.show_encrypted %}checked{% endif %}>
             <label for="show_encrypted">Show Encrypted Files</label>
