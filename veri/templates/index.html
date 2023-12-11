@@ -1,20 +1,32 @@
-{%load static%}
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{% static 'css/index.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"> <!-- Font Awesome CSS CDN -->
     <title>Encrypted File Upload</title>
 </head>
 <body>
 
 <div class="container">
-    <h1>Encrypted File Upload</h1>
+    <h1>Welcome to Secure File Storage</h1>
+    <p>Store your files with confidence using our advanced encryption. Your files, your security!</p>
+
+    <p>Concerned about the security of your sensitive files? Our platform provides state-of-the-art encryption to ensure that your documents, photos, and other files are protected from unauthorized access.</p>
+
+    <p>Key Features:</p>
+    <ul>
+        <li><i class="fas fa-lock"></i> End-to-End Encryption</li>
+        <li><i class="fas fa-shield-alt"></i> Robust Security Measures</li>
+        <li><i class="fas fa-cloud-upload-alt"></i> Seamless File Upload</li>
+        <li><i class="fas fa-lock-open"></i> Access Control</li>
+    </ul>
 
     <div class="buttons">
-        <a href="{% url 'login' %}" class="btn">Giriş Yap</a>
-        <a href="{% url 'register' %}" class="btn">Kayıt Ol</a>
+        <a href="{% url 'login' %}" class="btn btn-login"><i class="fas fa-sign-in-alt"></i> Login</a>
+        <a href="{% url 'register' %}" class="btn btn-register"><i class="fas fa-user-plus"></i> Register</a>
     </div>
 </div>
 

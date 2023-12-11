@@ -23,19 +23,26 @@ body {
     display: block;
     font-weight: bold;
     margin-bottom: 5px;
+    color: #333; /* Text color adjustment */
 }
 
 .form-group input {
     width: 100%;
     padding: 10px;
     box-sizing: border-box;
+    border: 1px solid #ddd; /* Input border adjustment */
+    border-radius: 3px; /* Input border radius adjustment */
 }
 
 .form-group button {
-    background-color: #4caf50;
+    background-color: #007BFF; /* Button background color adjustment */
     color: #fff;
     padding: 10px 15px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
+}
+
+.form-group button:hover {
+    background-color: #0056b3; /* Button hover background color adjustment */
 }

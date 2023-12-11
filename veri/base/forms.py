@@ -2,7 +2,12 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from .models import UploadedFile
+from captcha.fields import ReCaptchaField
+from captcha.widgets import ReCaptchaV2Checkbox
 
+class FormWithCaptcha(forms.Form):
+    captcha = ReCaptchaField(widget=ReCaptchaV2Checkbox(attrs={'data-callback': 'onCaptchaSuccess'}))
+    
 class RegisterForm(UserCreationForm):
     email = forms.EmailField()
 

@@ -1,0 +1,57 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/destek.css' %}">
+    <title>Secure File - Destek</title>
+</head>
+<body>
+
+<div class="container">
+    <header class="header">
+        <h1>Secure File</h1>
+        <nav class="nav">
+            <ul>
+                <li><a href="{% url 'index' %}">Ana Sayfa</a></li>
+                <li><a href="{% url 'user_profile' %}">Profil</a></li>
+                <li><a href="{% url 'support' %}">Destek</a></li>
+                <!-- Diğer sayfa linkleri eklenebilir -->
+            </ul>
+        </nav>
+    </header>
+
+    <div class="content">
+        <h2>Destek Merkezi</h2>
+        <p>
+            Hoş geldiniz! Secure File kullanımıyla ilgili her türlü soru, sorun veya geri bildirim için buradayız.
+            Aşağıdaki formu kullanarak bizimle iletişime geçebilirsiniz.
+        </p>
+
+        <form method="post" action="{% url 'support' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="name">Adınız Soyadınız:</label>
+                <input type="text" name="name" id="name" required>
+            </div>
+            <div class="form-group">
+                <label for="email">E-posta Adresiniz:</label>
+                <input type="email" name="email" id="email" required>
+            </div>
+            <div class="form-group">
+                <label for="message">Mesajınız:</label>
+                <textarea name="message" id="message" rows="4" required></textarea>
+            </div>
+            <button type="submit">Gönder</button>
+        </form>
+    </div>
+</div>
+
+<footer class="footer">
+    <p>&copy; 2023 Secure File. Tüm hakları saklıdır.</p>
+</footer>
+
+</body>
+</html>

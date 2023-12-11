@@ -1,4 +1,4 @@
-/* style.css */
+/* kayit.css */
 
 body {
     font-family: Arial, sans-serif;
@@ -70,4 +70,19 @@ button {
 
 button:hover {
     background-color: #45a049;
+}
+
+/* Additional styles for the register page */
+/* You can customize these styles as needed for the register page */
+
+.content h2 {
+    color: #333; /* Adjust the color as needed */
+}
+
+.content p {
+    color: #555; /* Adjust the color as needed */
+}
+
+.content a {
+    color: #007BFF; /* Adjust the color as needed */
 }

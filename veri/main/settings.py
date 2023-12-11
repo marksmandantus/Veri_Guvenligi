@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'captcha',
     'jazzmin',
     'base.apps.BaseConfig',
     'django.contrib.admin',
@@ -137,3 +138,21 @@ MEDIA_URL = '/media/'
 JAZZMIN_UI_TWEAKS = {
     "theme": "darkly",
 }
+from dotenv import load_dotenv
+load_dotenv()
+
+
+# E-posta ayarları
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'  # Gmail SMTP sunucu adresi
+EMAIL_PORT = 587  # Gmail SMTP portu
+EMAIL_USE_TLS = True  # Güvenli bağlantı
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+
+from decouple import config
+
+# Ben robot değilim doğrulaması
+
+RECAPTCHA_PUBLIC_KEY = config('RECAPTCHA_PUBLIC_KEY')
+RECAPTCHA_PRIVATE_KEY = config('RECAPTCHA_PRIVATE_KEY')

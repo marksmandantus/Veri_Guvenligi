@@ -1,12 +1,30 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login
-from .forms import RegisterForm, UserLoginForm, FileUploadForm
+from .forms import RegisterForm, UserLoginForm, FileUploadForm, FormWithCaptcha
 from .models import UploadedFile, CustomUser, Directory
-from django.shortcuts import get_object_or_404
 from django.db.models import Q
+from django.contrib import messages
+from django_ratelimit.decorators import ratelimit
+from django.http import HttpResponseForbidden
 
+
+def rate_limit_with_template(view_func):
+    def _wrapped_view(request, *args, **kwargs):
+        response = ratelimit(key='user_or_ip', rate='10/m', method='GET', block=False)(view_func)(request, *args, **kwargs)
+        
+        if hasattr(request, 'limited') and request.limited:
+            return render(request, 'ratelimit.html')  # veya HttpResponseForbidden("Custom Rate Limit Exceeded Message")
+
+        return response
+
+    return _wrapped_view
+
+@rate_limit_with_template
 def index(request):
     return render(request, 'index.html')
+
+def support(request):
+    return render(request, 'support.html')
 
 def register(request):
     if request.method == 'POST':
@@ -21,13 +39,20 @@ def register(request):
 def user_login(request):
     if request.method == 'POST':
         form = UserLoginForm(data=request.POST)
+        captcha_form = FormWithCaptcha(request.POST)
+
         if form.is_valid():
             user = form.get_user()
             login(request, user)
-            return redirect('user_profile')  # Kullanıcıyı profiline yönlendir
+            return redirect('user_profile')  # Redirect the user to the profile page upon successful login
+        else:
+            messages.error(request, 'Invalid username or password. Please try again.')  # Add an error message
     else:
         form = UserLoginForm()
-    return render(request, 'login.html', {'form': form})
+    captcha_form = FormWithCaptcha(request.POST)
+
+
+    return render(request, 'login.html', {'form': form, 'captcha_form': captcha_form})
 
 def user_profile(request):
     user = request.user
@@ -115,20 +140,6 @@ def user_profile(request):
         user_files = UploadedFile.objects.filter(user_profile=user_profile)
     
     return render(request, 'user_profile.html', {'form': form, 'user_files': user_files, 'files_by_directory': files_by_directory, 'directories': directories})
-
-def check_file_encryption(request, file_id):
-    try:
-        uploaded_file = UploadedFile.objects.get(id=file_id)
-
-        if uploaded_file.is_encrypted:
-            result_message = "Dosya şifreli."
-        else:
-            result_message = "Dosya şifreli değil."
-
-    except UploadedFile.DoesNotExist:
-        result_message = "Belirtilen ID'ye sahip dosya bulunamadı."
-
-    return render(request, 'check_file_encryption.html', {'result_message': result_message})
 
 def custom_404(request, exception):
     return render(request, '404.html', status=404)
