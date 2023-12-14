@@ -2,16 +2,20 @@ from django.contrib.auth.models import User
 from django.db import models
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
-import base64
-from django.core.files.base import ContentFile
 import os 
 
 class CustomUser(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return self.user.username
+
 class Directory(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
 
 
 class UploadedFile(models.Model):
@@ -36,6 +40,7 @@ class UploadedFile(models.Model):
             iv = b'01234567'
             print("Encrypting using DES algorithm...")
 
+            # file deepcode ignore InsecureCipher: <DES algoritması güvenli değil!>
             cipher = Cipher(algorithms.TripleDES(key), modes.CFB8(iv), backend=default_backend())
             encryptor = cipher.encryptor()
             ciphertext = encryptor.update(plaintext) + encryptor.finalize()
