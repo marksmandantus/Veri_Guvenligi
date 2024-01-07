@@ -5,53 +5,30 @@
            deleteFile(fileId);
        });
 
-       $('.download-file').on('click', function() {
-        var fileEncryptionKey = $(this).data('encryption-key');
-        var fileEncryptionAlgorithm = $(this).data('encryption-algorithm');
-        var enteredAlgorithm = prompt('Enter Encryption Algorithm:');
-        var enteredKey = prompt('Enter Encryption Key:');
-        
-        console.log(`File Encryption Key: ${fileEncryptionKey}`);
-        console.log(`Entered Key: ${enteredKey}`);
+       $('.download-file').on('click', function() {   
+        var fileUrl = $(this).data('file-url');
+      
+        console.log(`Downloading file from URL: ${fileUrl}`);
     
-        if (enteredKey === null || enteredKey === '') {
-            return;
-        }
-        if (enteredAlgorithm === null || enteredAlgorithm === '') {
-            return;
-        }
-        if (enteredKey == fileEncryptionKey && enteredAlgorithm == fileEncryptionAlgorithm) {
-            var fileUrl = $(this).data('file-url');
-          
-            console.log(`Downloading file from URL: ${fileUrl}`);
-
-            fetch(fileUrl, {
-                headers: {
-                    'Algorithm-Key': fileEncryptionKey
-                }
-            })
-            .then(response => {
-                if (response.ok) {
-                    return response.blob();
-                } else {
-                    throw new Error('Dosya indirme hatası: ' + response.statusText);
-                }
-            })
-            .then(blob => {
-                var url = window.URL.createObjectURL(blob);
-                var a = document.createElement('a');
-                a.href = url;
-                a.download = fileUrl.split('/').pop();
-                document.body.appendChild(a);
-                a.click();
-                window.URL.revokeObjectURL(url);
-            })
-            .catch(error => console.error(error));
-        } else {
-            alert('Yanlış şifreleme anahtarı veya algoritma! Dosya indirilemiyor.');
-        }
+        fetch(fileUrl)
+        .then(response => {
+            if (response.ok) {
+                return response.blob();
+            } else {
+                throw new Error('Dosya indirme hatası: ' + response.statusText);
+            }
+        })
+        .then(blob => {
+            var url = window.URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = fileUrl.split('/').pop();
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+        })
+        .catch(error => console.error(error));
     });
-
     
 
        function deleteFile(fileId) {
