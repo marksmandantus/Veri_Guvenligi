@@ -3,6 +3,8 @@ from django.db import models
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 import os 
+from os import urandom
+from cryptography.hazmat.primitives import padding
 
 class CustomUser(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -64,15 +66,26 @@ class UploadedFile(models.Model):
             print(f"Plaintext: {plaintext}, Key: {key}")
 
             key = key.ljust(16)[:16].encode()  # Anahtarı kodlama işlemi ve uzunluğu 16 byte'a tamamlama
+            iv = urandom(8)  # Generate a random 8-byte initialization vector
+
             print("Encrypting using Blowfish algorithm...")
 
-            cipher = Cipher(algorithms.Blowfish(key), modes.CFB8(), backend=default_backend())
+            def pad(data):
+                padder = padding.PKCS7(64).padder()  # 64 is the block size in bits (8 bytes)
+                padded_data = padder.update(data) + padder.finalize()
+                return padded_data
+
+            padded_plaintext = pad(plaintext)
+
+            cipher = Cipher(algorithms.Blowfish(key), modes.CBC(iv), backend=default_backend())
             encryptor = cipher.encryptor()
-            ciphertext = encryptor.update(plaintext) + encryptor.finalize()
+            ciphertext = encryptor.update(padded_plaintext) + encryptor.finalize()
 
             print("Encryption successful.")
             return ciphertext
         else:
             print("No encryption selected. Returning plaintext.")
             return plaintext
+        
+    
 
