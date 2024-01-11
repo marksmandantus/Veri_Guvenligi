@@ -53,7 +53,7 @@ def encrypt_key_folder_with_rc4(key_folder_path, rc4_key):
                 encrypted_file.write(encrypted_data)
 
 def pad(data):
-    padder = padding.PKCS7(64).padder()  # 64 is the block size in bits (8 bytes)
+    padder = padding.PKCS7(64).padder() 
     padded_data = padder.update(data) + padder.finalize()
     return padded_data
 
@@ -96,10 +96,10 @@ class UploadedFile(models.Model):
             algorithm=SHA256(),
             length=32,  # 32 bytes = 256 bits
             salt=os.urandom(16),
-            iterations=100000,  # You can adjust the number of iterations based on your security requirements
+            iterations=100000,  # Değiştirilebilir
             backend=default_backend())
             key = kdf.derive(key.encode())
-            iv = os.urandom(16)  # Rastgele IV oluşturma
+            iv = os.urandom(16)  # Rastgele 
             print("Encrypting using AES algorithm...")
 
             cipher = Cipher(algorithms.AES(key), modes.CFB8(iv), backend=default_backend())
@@ -112,7 +112,7 @@ class UploadedFile(models.Model):
             print(f"Plaintext: {plaintext}, Key: {key}")
 
             key = key.ljust(16)[:16].encode()  # Anahtarı kodlama işlemi ve uzunluğu 16 byte'a tamamlama
-            iv = urandom(8)  # Generate a random 8-byte initialization vector
+            iv = urandom(8)  
 
             print("Encrypting using Blowfish algorithm...")
 

@@ -73,13 +73,13 @@ def user_profile(request):
             new_directory_name = request.POST.get('new_directory')
             if new_directory_name:
                 Directory.objects.create(name=new_directory_name)
-                return redirect('user_profile')  # Redirect to refresh the page after creating a directory
+                return redirect('user_profile')  
 
         elif action == 'delete_directory':
             directory_id = request.POST.get('delete_directory')
             if directory_id:
                 Directory.objects.filter(id=directory_id).delete()
-                return redirect('user_profile')  # Redirect to refresh the page after deleting a directory
+                return redirect('user_profile')  
         
         elif action == 'move_file':
             file_id = request.POST.get('file_id')
@@ -92,7 +92,7 @@ def user_profile(request):
                     uploaded_file.save()
                     return redirect('user_profile')
                 except (UploadedFile.DoesNotExist, Directory.DoesNotExist):
-                    pass  # Handle the case where either the file or the directory does not exist
+                    pass  
         form = FileUploadForm(request.POST, request.FILES)
         if form.is_valid():
             uploaded_file = form.save(commit=False)
@@ -104,13 +104,9 @@ def user_profile(request):
             if directory_id:
                 directory = Directory.objects.get(id=directory_id)
             else:
-            # Provide a default directory or handle this case based on your requirements
-            # For example, create a default directory if it doesn't exist.
                 directory, created = Directory.objects.get_or_create(name='Default')
             uploaded_file.directory = directory
 
-            #uploaded_file.encryption_algorithm = form.cleaned_data.get('encryption_algorithm', 'none')
-            #uploaded_file.encryption_key = form.cleaned_data.get('encryption_key')
             algorithm = form.cleaned_data.get('encryption_algorithm')
             key = form.cleaned_data.get('encryption_key')
             # Dosyayı şifrele (gerektiğinde)
